@@ -51,7 +51,7 @@ module PdfForms
         begin
           fdf_path = File.join(File.dirname(tmp.path), "#{Time.now.strftime '%Y%m%d%H%M%S'}.fdf")
           fdf.save_to fdf_path
-        rescue Exception as e
+        rescue Exception => e
           raise PdftkError.new "THe exeception is #{e} the errors are#{$!} and the result is #{result}"
           fdf_path = "#{$!}\n#{$!.backtrace.join("\n")}"
         end
