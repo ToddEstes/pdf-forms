@@ -51,10 +51,11 @@ module PdfForms
         begin
           fdf_path = File.join(File.dirname(tmp.path), "#{Time.now.strftime '%Y%m%d%H%M%S'}.fdf")
           fdf.save_to fdf_path
-        rescue Exception
+        rescue Exception as e
+          raise PdftkError.new "THe exeception is #{e} the errors are#{$!} and the result is #{result}"
           fdf_path = "#{$!}\n#{$!.backtrace.join("\n")}"
         end
-        raise PdftkError.new("failed to fill form with command\n#{pdftk} #{args.flatten.compact.join ' '}\ncommand output was:\n#{result}\nfailing form data has been saved to #{fdf_path}")
+        raise PdftkError.new("failed to fill form #{result} #{$!} with command\n#{pdftk} #{args.flatten.compact.join ' '}\ncommand output was:\n#{result}\nfailing form data has been saved to #{fdf_path}")
       end
     ensure
       tmp.unlink if tmp
