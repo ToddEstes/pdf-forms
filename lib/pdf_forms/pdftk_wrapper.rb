@@ -43,7 +43,7 @@ module PdfForms
       fdf.save_to tmp.path
       fill_options = {:tmp_path => tmp.path}.merge(fill_options)
 
-      args = [ q_template, 'fill_form', normalize_path(tmp.path), 'output', q_destination ]
+      args = [ q_template, 'fill_form', normalize_path(tmp.path), 'output', q_destination, "verbose" ]
       result = call_pdftk(*(append_options(args, fill_options)))
 
       unless File.readable?(destination) && File.size(destination) > 0
@@ -52,10 +52,10 @@ module PdfForms
           fdf_path = File.join(File.dirname(tmp.path), "#{Time.now.strftime '%Y%m%d%H%M%S'}.fdf")
           fdf.save_to fdf_path
         rescue Exception => e
-          raise PdftkError.new "THe exeception is #{e} the errors are#{$!} and the result is #{result}"
+          # raise PdftkError.new "THe exeception is #{e} the errors are#{$!} and the result is #{result}
           fdf_path = "#{$!}\n#{$!.backtrace.join("\n")}"
         end
-        raise PdftkError.new("failed to fill form #{result} #{$!} with command\n#{pdftk} #{args.flatten.compact.join ' '}\ncommand output was:\n#{result}\nfailing form data has been saved to #{fdf_path}")
+        raise PdftkError.new("failed to fill form #{result} with command\n#{pdftk} #{args.flatten.compact.join ' '}\ncommand output was:\n#{result}\nfailing form data has been saved to #{fdf_path}")
       end
     ensure
       tmp.unlink if tmp
